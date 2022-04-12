@@ -98,7 +98,6 @@ class BuyCartItemsViewSet(APIView):
             print(cart_id)
             item = get_object_or_404(models.Cart, id=cart_id)
             item.delete()
-        # cart_id = models.Cart.objects.filter(user=request.data.get('user')).values_list('id', flat=True).first()
-        # print(cart_id)
+        
         return Response({"status": "success", "data": request.data})
         
