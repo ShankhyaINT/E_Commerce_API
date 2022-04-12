@@ -21,4 +21,4 @@ class CartSerializer(serializers.ModelSerializer):
 class BuySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Buy
-        fields = ('id', 'user', 'product', 'quantity', 'amount', 'payment_method')
+        fields = ('id', 'user', 'product', 'quantity', 'amount', 'payment_method', 'datetime')

@@ -22,3 +22,4 @@ class Buy(models.Model):
     quantity = models.PositiveIntegerField()
     amount = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=100)
+    datetime = models.DateTimeField(auto_now_add=True)
