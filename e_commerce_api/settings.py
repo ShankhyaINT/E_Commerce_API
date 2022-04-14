@@ -123,3 +123,26 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#================================================================
+# Settings for redis
+CACHES = {
+    # "default": {
+    #     "BACKEND": "redis_cache.RedisCache",
+    #     "LOCATION": "redis-17287.c264.ap-south-1-1.ec2.cloud.redislabs.com:17287",
+    #     "OPTIONS": {
+    #         'PASSWORD': 'rkJ5t4O7hWeABruxrt99EucZnnGoEu6Z',
+    #         'DB': 0,
+    #     }
+    # }
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://:rkJ5t4O7hWeABruxrt99EucZnnGoEu6Z@redis-17287.c264.ap-south-1-1.ec2.cloud.redislabs.com:17287',
+
+        # 'LOCATION': 'redis://testuser:LvqK@2AQhQEL7tf@redis-17287.c264.ap-south-1-1.ec2.cloud.redislabs.com:17287',
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+CACHE_TTL = 60 * 1

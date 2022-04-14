@@ -7,19 +7,35 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     # permission_classes = [permissions.IsAuthenticated]
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(60*60))
+    def dispatch(self, *args, **kwargs):
+        return super(UserViewSet, self).dispatch(*args, **kwargs)
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(60*60))
+    def dispatch(self, *args, **kwargs):
+        return super(ProductViewSet, self).dispatch(*args, **kwargs)
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = models.Cart.objects.all()
     serializer_class = serializers.CartSerializer
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(60*60))
+    def dispatch(self, *args, **kwargs):
+        return super(CartViewSet, self).dispatch(*args, **kwargs)
 
 # class BuyViewSet(viewsets.ModelViewSet):
 #     queryset = models.Buy.objects.all()
@@ -51,14 +67,22 @@ class BuyViewSet(APIView):
             return Response({"status": "error", "data": serializer.errors})
 
     def get(self, request, id=None):
-        if id:
-            item = models.Buy.objects.get(id=id)
-            serializer = serializers.BuySerializer(item)
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        try:
+            if id:
+                item = models.Buy.objects.get(id=id)
+                serializer = serializers.BuySerializer(item)
+                return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
-        items = models.Buy.objects.all()
-        serializer = serializers.BuySerializer(items, many=True)
-        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+            items = models.Buy.objects.all()
+            serializer = serializers.BuySerializer(items, many=True)
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        except:
+            return Response({"status": "error", "data": "data does not exist"})
+
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(60*60))
+    def dispatch(self, *args, **kwargs):
+        return super(BuyViewSet, self).dispatch(*args, **kwargs)
 
 # Buy from cart
 class BuyCartItemsViewSet(APIView): 
@@ -98,6 +122,10 @@ class BuyCartItemsViewSet(APIView):
             print(cart_id)
             item = get_object_or_404(models.Cart, id=cart_id)
             item.delete()
-        
+            print('deleted')
         return Response({"status": "success", "data": request.data})
-        
+    
+    @method_decorator(vary_on_cookie)
+    @method_decorator(cache_page(60*60))
+    def dispatch(self, *args, **kwargs):
+        return super(BuyCartItemsViewSet, self).dispatch(*args, **kwargs)    
